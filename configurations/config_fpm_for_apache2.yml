@@ -1,0 +1,32 @@
+- name: Install fpm
+  apt:
+    name:
+      - php{{ PHP_VERSION }}-fpm
+    state: present
+    update_cache: yes
+
+- name: enable php and fpm mod for apache2
+  apache2_module:
+    name:
+      - php
+      - proxy_fcgi
+    state: present
+
+# Configure Apache to use PHP-FPM
+- name: Configure Apache to use PHP-FPM
+  blockinfile:
+    path: /etc/apache2/conf-available/php{{ PHP_VERSION }}-fpm.conf
+    block: |
+      <FilesMatch \.php$>
+        SetHandler "proxy:unix:/run/php/php{{ PHP_VERSION }}-fpm.sock|fcgi://localhost/"
+      </FilesMatch>
+    marker: "# {mark} ANSIBLE MANAGED BLOCK PHP-FPM CONFIG"
+
+- name: eable PHP-FPM config
+  file:
+    src: /etc/apache2/conf-available/php{{ PHP_VERSION }}-fpm.conf
+    dest: /etc/apache2/conf-enabled/php{{ PHP_VERSION }}-fpm.conf
+    state: link
+  notify: 
+    - reload apache2
+    - reload php-fpm
