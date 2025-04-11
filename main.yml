@@ -23,7 +23,15 @@
             state: absent # to remove
             remove: false # remove home_dir or not when state is absent
 
+    # Install Apache
     - include_tasks: ./install_dependencies/apache2.yml
+
+    # install PHP, its mods, and Composer
+    - include_tasks: ./install_dependencies/php.yml 
+      vars:
+        PHP_VERSION: 8.3
+        COMPOSER_VERSION: 2.2.7
+
 
 
 
@@ -37,3 +45,8 @@
       service:
         name: apache2
         state: reloaded
+
+    - name: restart php-fpm
+      service: 
+        name: php{{ PHP_VERSION }}-fpm
+        state: restarted
