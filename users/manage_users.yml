@@ -1,0 +1,19 @@
+- name: Add/remove user 
+  ansible.builtin.user:
+    name: "{{ item.username }}"
+    shell: /bin/bash # if not specified user will have vanilla shell not bin/bash
+    state: "{{ item.state }}" # present to create OR absent to delete
+    password: "{{ item.password | default ('') }}"
+    # password must me hashed. run ' openssl passwd -5 "password" ' command then use the output.
+    # if password not given then the user will be passwordless
+    groups: "{{ item.groups | default('') }}" # to add the use to groups. include 'sudo' to give root access to the user.
+    remove: "{{ item.remove | default(false) }}" # remove home_dir or not when state is absent
+  loop: "{{ users }}"
+
+- name: add ssh key
+  ansible.builtin.authorized_key:
+    user: "{{ item.username }}"
+    key: "{{ item.ssh_key | default('') }}"
+    state: present
+  loop: "{{ users }}"
+  when: item.state == "present"
