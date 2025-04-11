@@ -1,0 +1,22 @@
+- name: Install Apache2 and required modules
+  apt:
+    name:
+      - apache2
+      - libapache2-mod-fcgid
+      - apache2-dev
+      - apache2-utils
+    state: present
+    update_cache: yes
+
+- name: enable apache2 mods
+  apache2_module:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - rewrite
+    - ssl
+    - headers
+    - proxy_http
+    - php
+    - proxy_fcgi # for fpm
+  notify: restart apache2

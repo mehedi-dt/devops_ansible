@@ -3,21 +3,37 @@
 # if the user is passwordless then any random password would work.
 
 - name: Main Playbook where all the tasked be called from.
-  hosts: host-group-1
+  hosts: dev
   become: yes
 
   tasks:
     # Calling user management task
-    - include_tasks: users/manage_users.yml
-      users:
-        - username: mehedi
-          state: present # Set to "absent" to delete the user 
-          ssh_key: "ssh-rsa..." # public key for ssh
-          groups: sudo # to add the use to groups. include 'sudo' to give root access to the user.
-          password: ''
-          # password must me hashed. run ' openssl passwd -5 "password" ' to hash.
-          # if password not given then the user will be passwordless
+    - include_tasks: ./users/manage_users.yml
+      vars:
+        users:
+          - username: mehedi
+            state: present # Set to "absent" to delete the user 
+            ssh_key: "ssh-rsa..." # public key for ssh
+            groups: sudo # to add the use to groups. include 'sudo' to give root access to the user.
+            password: ''
+            # password must me hashed. run ' openssl passwd -5 "password" ' to hash.
+            # if password not given then the user will be passwordless
 
-        - username: user-2
-          state: absent # to remove
-          remove: false # remove home_dir or not when state is absent
+          - username: user-2
+            state: absent # to remove
+            remove: false # remove home_dir or not when state is absent
+
+    - include_tasks: ./install_dependencies/apache2.yml
+
+
+
+  handlers:
+    - name: restart apache2
+      service:
+        name: apache2
+        state: restarted
+
+    - name: reload apache2 
+      service:
+        name: apache2
+        state: reloaded
