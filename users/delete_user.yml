@@ -1,0 +1,6 @@
+# same thing can also be done using absent in manage_user script.
+- name: delete user {{ user_name }}
+  user:
+    name: "{{ user_name }}"
+    state: absent
+    remove: "{{ delete_home | default(false) }}"
