@@ -1,32 +1,56 @@
 - name: Install fpm
   apt:
     name:
-      - php{{ PHP_VERSION }}-fpm
+      - php{{ PHP_VERSION | default(8.3) }}-fpm
     state: present
     update_cache: yes
 
-- name: enable php and fpm mod for apache2
+- name: Enable fpm mod for apache2
   apache2_module:
-    name:
-      - php
-      - proxy_fcgi
+    name: proxy_fcgi
     state: present
 
-# Configure Apache to use PHP-FPM
+# Ensure the PHP-FPM config file exists (create it if it doesn't)
+- name: Ensure PHP-FPM config file exists
+  file:
+    path: /etc/apache2/conf-available/php{{ PHP_VERSION }}-fpm.conf
+    state: touch
+  register: php_fpm_conf_file_created
+
+# Configure Apache to use PHP-FPM only if the file doesn't exist
 - name: Configure Apache to use PHP-FPM
   blockinfile:
     path: /etc/apache2/conf-available/php{{ PHP_VERSION }}-fpm.conf
     block: |
-      <FilesMatch \.php$>
-        SetHandler "proxy:unix:/run/php/php{{ PHP_VERSION }}-fpm.sock|fcgi://localhost/"
-      </FilesMatch>
+      <IfModule !mod_php{{ PHP_VERSION }}>
+      <IfModule proxy_fcgi_module>
+        # Enable http authorization headers
+        <IfModule setenvif_module>
+        SetEnvIfNoCase ^Authorization$ "(.+)" HTTP_AUTHORIZATION=$1
+        </IfModule>
+        <FilesMatch ".+\.ph(?:ar|p|tml)$">
+          SetHandler "proxy:unix:/run/php/php{{ PHP_VERSION }}-fpm.sock|fcgi://localhost/"
+        </FilesMatch>
+      </IfModule>
+      </IfModule>
     marker: "# {mark} ANSIBLE MANAGED BLOCK PHP-FPM CONFIG"
+  when: php_fpm_conf_file_created.changed == true
+  notify:
+    - reload apache2
 
-- name: eable PHP-FPM config
+- name: Enable PHP-FPM config
   file:
     src: /etc/apache2/conf-available/php{{ PHP_VERSION }}-fpm.conf
     dest: /etc/apache2/conf-enabled/php{{ PHP_VERSION }}-fpm.conf
     state: link
+  when: (STATE | default('present')) == 'present'
   notify: 
     - reload apache2
-    - reload php-fpm
+
+- name: Disable PHP-FPM config
+  file:
+    path: /etc/apache2/conf-enabled/php{{ PHP_VERSION }}-fpm.conf
+    state: absent
+  when: (STATE | default('present')) == 'absent'
+  notify: 
+    - reload apache2

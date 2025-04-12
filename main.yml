@@ -34,6 +34,12 @@
         COMPOSER_VERSION: 2.2.7
         MODS: [fpm, cli, common, mysql, zip, gd, mbstring, curl, xml] 
 
+    # Configure Apache to use PHP-FPM
+    - include_tasks: ./configurations/config_fpm_for_apache2.yml
+      vars:
+        PHP_VERSION: 8.3
+        STATE: present
+
 
 
 
@@ -57,3 +63,8 @@
       service: 
         name: php{{ PHP_VERSION }}-fpm
         state: restarted
+
+    - name: reload php-fpm
+      service: 
+        name: php{{ PHP_VERSION }}-fpm
+        state: reloaded
