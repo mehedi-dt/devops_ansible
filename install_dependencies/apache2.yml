@@ -13,5 +13,5 @@
   apache2_module:
     name: "{{ item }}"
     state: present
-  loop: "{{ MODS }}"
+  loop: "{{ MODS | default([]) }}"
   notify: restart apache2
