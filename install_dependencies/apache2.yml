@@ -7,11 +7,11 @@
       - apache2-utils
     state: present
     update_cache: yes
-    notify: start apache2
+  notify: start apache2
 
 - name: enable apache2 mods
   apache2_module:
     name: "{{ item }}"
     state: present
-  loop: {{ mods }}
+  loop: "{{ mods }}"
   notify: restart apache2

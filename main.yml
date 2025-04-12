@@ -13,15 +13,14 @@
         users:
           - username: mehedi
             state: present # Set to "absent" to delete the user 
-            ssh_key: "ssh-rsa..." # public key for ssh
+            ssh_key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}" # public key for ssh
             groups: sudo # to add the use to groups. include 'sudo' to give root access to the user.
-            password: ''
-            # password must me hashed. run ' openssl passwd -5 "password" ' to hash.
-            # if password not given then the user will be passwordless
+            password: '' # if password not given then the user will be passwordless
 
           - username: user-2
             state: absent # to remove
-            remove: false # remove home_dir or not when state is absent
+            ssh_key: "sha-rsa...."
+            remove: true # remove home_dir or not when state is absent
 
     # Install Apache
     - include_tasks: ./install_dependencies/apache2.yml
@@ -31,7 +30,6 @@
           - ssl
           - headers
           - proxy_http
-          - php
           - proxy_fcgi # for fpm
 
     # install PHP, its mods, and Composer
