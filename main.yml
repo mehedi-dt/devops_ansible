@@ -8,31 +8,31 @@
 
   tasks:
     # Calling user management task
-    # - include_tasks: ./users/manage_users.yml
-    #   vars:
-    #     users:
-    #       - username: mehedi
-    #         state: present # Set to "absent" to delete the user 
-    #         ssh_key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}" # public key for ssh
-    #         groups: sudo # to add the use to groups. include 'sudo' to give root access to the user.
-    #         password: '' # if password not given then the user will be passwordless
+    - include_tasks: ./users/manage_users.yml
+      vars:
+        users:
+          - username: mehedi
+            state: present # Set to "absent" to delete the user 
+            ssh_key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}" # public key for ssh
+            groups: sudo # to add the use to groups. include 'sudo' to give root access to the user.
+            password: '' # if password not given then the user will be passwordless
 
-    #       - username: user-2
-    #         state: absent # to remove
-    #         ssh_key: "sha-rsa...."
-    #         remove: true # remove home_dir or not when state is absent
+          - username: user-2
+            state: absent # to remove
+            ssh_key: "sha-rsa...."
+            remove: true # remove home_dir or not when state is absent
 
     # Install Apache
     - include_tasks: ./install_dependencies/apache2.yml
       vars:
-        mods: [rewrite, ssl, headers, proxy_http, proxy_fcgi]
+        MODS: [rewrite, ssl, headers, proxy_http, proxy_fcgi]
 
     # install PHP, its mods, and Composer
     - include_tasks: ./install_dependencies/php.yml 
       vars:
         PHP_VERSION: 8.3
         COMPOSER_VERSION: 2.2.7
-        mods: [fpm, cli, common, mysql, zip, gd, mbstring, curl, xml, bcmath, intl, soap, opcache] 
+        MODS: [fpm, cli, common, mysql, zip, gd, mbstring, curl, xml, bcmath, intl, soap, opcache] 
 
 
 

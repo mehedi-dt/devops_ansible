@@ -5,10 +5,15 @@
       - php{{ PHP_VERSION }}-{{item}}
     state: present
     update_cache: yes
-  loop: "{{ mods }}"
+  loop: "{{ MODS }}"
 
-- name: install composer
+- name: Install composer
   shell: |
     cd ~
     curl -sS https://getcomposer.org/installer -o composer-setup.php
     sudo php composer-setup.php --install-dir=/usr/local/bin --filename=composer --version={{ COMPOSER_VERSION }}
+  register: script_output
+
+- name: Display composer install output
+  debug:
+    var: script_output.stdout

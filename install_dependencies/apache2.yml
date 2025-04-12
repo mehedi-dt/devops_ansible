@@ -9,9 +9,9 @@
     update_cache: yes
   notify: start apache2
 
-- name: enable apache2 mods
+- name: Enable apache2 mods
   apache2_module:
     name: "{{ item }}"
     state: present
-  loop: "{{ mods }}"
+  loop: "{{ MODS }}"
   notify: restart apache2
