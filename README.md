@@ -6,7 +6,7 @@ This repository contains an Ansible Playbook to automate server setup and config
 The playbook’s modular structure allows flexibility.  
 **main.yml**: Entry point. Includes tasks from `users/`, `install_dependencies/`, `configurations/` and other directories.  
 
-Run the playbook: `ansible-playbook -i hosts main.yml`
+**Run the playbook:** `ansible-playbook -i hosts main.yml`
 
 ### Directory Structure
 
