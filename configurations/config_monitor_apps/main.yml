@@ -1,0 +1,39 @@
+- name: Create monitor_apps directory
+  file:
+    path: "{{item}}"
+    state: directory
+  loop:
+    - /scripts/monitor_apps
+    - /var/log/monitor_apps
+
+- name: Copy multiple script files to /scripts/monitor_apps
+  copy:
+    src: "{{ item }}"
+    dest: /scripts/monitor_apps/
+    mode: '755'
+    owner: root
+    group: root
+  loop:
+    - main.sh
+    - monitor.sh
+
+- name: Copy systemd service file
+  copy:
+    src: ./monitor_apps.service
+    dest: /etc/systemd/system/
+    mode: '0644'
+    owner: root
+    group: root
+
+- name: Reload systemd daemon
+  command: systemctl daemon-reload
+
+- name: Restart monitor_apps service # it will start if not running initially
+  systemd:
+    name: monitor_apps.service
+    state: restarted
+
+- name: Enable monitor_apps service
+  systemd:
+    name: monitor_apps.service
+    enabled: true
