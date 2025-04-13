@@ -22,7 +22,7 @@
             ssh_key: "sha-rsa...."
             remove: true # remove home_dir or not when state is absent
 
-    # Install Apache
+    # Install Apache2
     - include_tasks: ./install_dependencies/apache2.yml
       vars:
         MODS: [rewrite, ssl, headers, proxy_http, proxy_fcgi]
