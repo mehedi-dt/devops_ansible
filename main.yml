@@ -40,6 +40,8 @@
         PHP_VERSION: 8.3
         STATE: present
 
+    - include_tasks: ./install-dependencies/aws-cli.yml
+
 
 
 
