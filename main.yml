@@ -23,16 +23,16 @@
             remove: true # remove home_dir or not when state is absent
 
     # Install Apache2
-    - include_tasks: ./install_dependencies/apache2.yml
+    - include_tasks: ./install-dependencies/apache2.yml
       vars:
         MODS: [rewrite, ssl, headers, proxy_http, proxy_fcgi]
 
-    # install PHP, its mods, and Composer
-    - include_tasks: ./install_dependencies/php.yml 
+    # Install PHP, its mods, and Composer
+    - include_tasks: ./install-dependencies/php.yml 
       vars:
-        PHP_VERSION: 8.3
-        COMPOSER_VERSION: 2.2.7
-        MODS: [fpm, cli, common, mysql, zip, gd, mbstring, curl, xml] 
+        PHP_VERSION: 8.1
+        COMPOSER_VERSION: 2.2.7 # don't pass this var if don't want to install
+        MODS: [fpm, cli, common, mysql, zip, gd, mbstring, curl, xml, bcmath, intl, redis, bz2, grpc, igbinary, imagick] 
 
     # Configure Apache to use PHP-FPM
     - include_tasks: ./configurations/config_fpm_for_apache2.yml
