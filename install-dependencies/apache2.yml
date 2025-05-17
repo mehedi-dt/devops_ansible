@@ -1,0 +1,19 @@
+- name: Install Apache2 and required modules
+  apt:
+    name:
+      - apache2
+      - libapache2-mod-fcgid
+      - apache2-dev
+      - apache2-utils
+    state: "{{ STATE | default('present') }}"
+    update_cache: yes
+  notify: start apache2
+
+# Enable apache2
+- name: Enable apache2 mods
+  apache2_module:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ MODS | default([]) }}"
+  when: STATE is not defined or STATE != 'absent'
+  notify: restart apache2

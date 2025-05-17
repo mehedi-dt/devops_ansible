@@ -1,0 +1,30 @@
+- name: Install required packages
+  apt:
+    name: [unzip, curl]
+    state: present
+    update_cache: yes
+
+- name: Download AWS CLI v2 installer
+  get_url:
+    url: "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"
+    dest: "/tmp/awscliv2.zip"
+    mode: '0644'
+
+- name: Unzip AWS CLI installer
+  unarchive:
+    src: "/tmp/awscliv2.zip"
+    dest: "/tmp"
+    remote_src: yes
+
+- name: Run AWS CLI installer
+  command: ./aws/install
+  args:
+    chdir: /tmp
+
+- name: Verify AWS CLI version
+  command: aws --version
+  register: aws_cli_version
+
+- name: Show installed AWS CLI version
+  debug:
+    msg: "{{ aws_cli_version.stdout }}"
