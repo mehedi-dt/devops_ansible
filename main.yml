@@ -42,6 +42,10 @@
 
     - include_tasks: ./install-dependencies/aws-cli.yml
 
+    - include_tasks: ./install-dependencies/aws-codedeploy-agent.yml
+      vars:
+        REGION: ap-south-1 # region where the installation file will be downloaded from. leave empty for default region (euw2).
+
 
 
 
