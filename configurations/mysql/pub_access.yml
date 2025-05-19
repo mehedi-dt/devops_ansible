@@ -1,3 +1,9 @@
+# make sure mysql is installed and running.
+- name: start and enable mysql service
+  service:
+    name: mysql
+    state: started
+
 - name: Enable remote access to mysql from outside host
   lineinfile:
       path: /etc/mysql/mysql.conf.d/mysqld.cnf
