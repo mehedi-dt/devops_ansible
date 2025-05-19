@@ -1,0 +1,44 @@
+- name: Load PHP config from external file
+  include_vars:
+    file: "{{ CONFIG_FILE }}"
+    name: loaded_config
+
+# Now set CONFIG from the loaded file
+- set_fact:
+    CONFIG: "{{ loaded_config.CONFIG }}"
+
+- name: Find php.ini files for each mode
+  find:
+    paths: "/etc/php/{{ PHP_VERSION }}/{{ item }}"
+    patterns: "php.ini"
+    file_type: file
+  loop: "{{ MODS }}"
+  register: ini_files
+  ignore_errors: true
+
+- name: Backup php.ini before modifying
+  copy:
+    src: "{{ item.path }}"
+    dest: "{{ item.path }}.bak.{{ ansible_date_time.date | regex_replace('-', '') }}"
+    remote_src: yes
+  loop: "{{ query('subelements', ini_files.results, 'files') | flatten }}"
+  when: item.path is defined
+
+- name: Update PHP settings in php.ini files
+  lineinfile:
+    path: "{{ ini_file.path }}"
+    regexp: '^{{ config.key | regex_escape() }}\s*=.*'
+    line: "{{ config.key }} = {{ config.value }}"
+    backrefs: yes
+  loop: "{{ ini_files.results | map(attribute='files') | flatten | product(CONFIG | dict2items) | list }}"
+  loop_control:
+    loop_var: pair
+  when: pair.0.path is defined
+  vars:
+    ini_file: "{{ pair.0 }}"
+    config: "{{ pair.1 }}"
+
+# - name: Debug loop items
+#   debug:
+#     var: item
+#   loop: "{{ query('subelements', ini_files.results, 'files') | product(CONFIG | dict2items) | list }}"

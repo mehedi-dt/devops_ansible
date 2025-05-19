@@ -57,6 +57,12 @@
 
     - include_tasks: ./install-dependencies/supervisor.yml
 
+    - include_tasks: ./configurations/php/main.yml
+      vars:
+        PHP_VERSION: 8.1
+        MODS: [fpm, cli]
+        CONFIG_FILE: "./configurations/php/values/server-1.yml"
+
 
 
   handlers:
