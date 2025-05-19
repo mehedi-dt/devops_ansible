@@ -63,6 +63,13 @@
         MODS: [fpm, cli]
         CONFIG_FILE: "./configurations/php/values/server-1.yml"
 
+    - include_tasks: ./configurations/mysql/pub-access.yml
+    - include_tasks: ./configurations/mysql/db-user.yml
+      vars:
+        dbs:
+        - db_name: db-1
+          db_pass: "password"
+
 
 
   handlers:
