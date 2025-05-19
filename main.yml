@@ -53,6 +53,8 @@
 
     - include_tasks: ./install-dependencies/docker.yml
 
+    - include_tasks: ./install-dependencies/mysql.yaml
+
 
 
   handlers:
