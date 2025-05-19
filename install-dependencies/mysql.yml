@@ -1,0 +1,25 @@
+- name: Installing Mysql  and dependencies
+  package:
+    name: "{{item}}"
+    state: present
+    update_cache: yes
+  loop:
+    - mysql-server
+    - mysql-client 
+    - python3-mysqldb # for creating dbs with ansible
+    - libmysqlclient-dev
+  become: yes
+
+- name: start and enable mysql service
+  service:
+    name: mysql
+    state: started
+    enabled: yes
+
+# - name: Enable remote access to mysql from outside host
+#   lineinfile:
+#       path: /etc/mysql/mysql.conf.d/mysqld.cnf
+#       regexp: '^bind-address'
+#       line: 'bind-address = 0.0.0.0'
+#       backup: yes
+#   notify: restart mysql
