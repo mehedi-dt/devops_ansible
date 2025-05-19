@@ -1,0 +1,12 @@
+- name: Enable remote access to mysql from outside host
+  lineinfile:
+      path: /etc/mysql/mysql.conf.d/mysqld.cnf
+      regexp: '^bind-address'
+      line: 'bind-address = 0.0.0.0'
+      backup: yes
+
+- name: start and enable mysql service
+  service:
+    name: mysql
+    state: restarted
+    enabled: yes
