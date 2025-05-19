@@ -1,0 +1,34 @@
+- name: Installing Mysql  and dependencies
+  package:
+    name: "{{item}}"
+    state: present
+    update_cache: yes
+  loop:
+    - mysql-server
+    - mysql-client 
+    - python3-mysqldb # for creating dbs with ansible
+    - libmysqlclient-dev
+  become: yes
+
+- name: start and enable mysql service
+  service:
+    name: mysql
+    state: started
+    enabled: yes
+
+- name: creating dbs
+  mysql_db:
+    name: "{{ item.db_name }}"
+    state: present
+  loop: "{{ dbs }}"
+
+- name: creating mysql users for the dbs
+  mysql_user:
+    name: "{{ item.db_name }}_user"
+    password: "{{ item.db_pass }}"
+    # encrypted: yes
+    # plugin: mysql_native_password
+    priv: '{{ item.db_name }}.*:ALL'
+    host: '%'
+    state: present
+  loop: "{{ dbs }}"
