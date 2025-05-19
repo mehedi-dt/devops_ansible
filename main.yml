@@ -46,6 +46,10 @@
       vars:
         REGION: ap-south-1 # region where the installation file will be downloaded from. leave empty for default region (euw2).
 
+    - include_tasks: ./install-dependencies/node.yml
+      vars:
+        NODE_VERSION: 20.12.2 # 22.x.x
+        PACKAGE_MANAGERS: [pnpm]
 
 
 

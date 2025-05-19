@@ -1,0 +1,45 @@
+- name: Ensure curl is installed
+  apt:
+    name: curl
+    state: present
+    update_cache: yes
+
+- name: Add NodeSource APT repo for Node.js {{ NODE_VERSION }}
+  shell: curl -fsSL https://deb.nodesource.com/setup_{{ NODE_VERSION | string | split('.') | first }}.x | bash -
+  args:
+    executable: /bin/bash
+
+- name: Install Node.js
+  apt:
+    name: nodejs
+    state: present
+
+- name: Install selected package managers- {{ PACKAGE_MANAGERS }}
+  npm:
+    name: "{{ item }}"
+    global: yes
+  loop: "{{ PACKAGE_MANAGERS }}"
+  when: PACKAGE_MANAGERS is defined
+
+- name: Ensure curl is installed
+  apt:
+    name: curl
+    state: present
+    update_cache: yes
+
+- name: Add NodeSource APT repo for Node.js {{ NODE_VERSION }}
+  shell: curl -fsSL https://deb.nodesource.com/setup_{{ NODE_VERSION | string | split('.') | first }}.x | bash -
+  args:
+    executable: /bin/bash
+
+- name: Install Node.js
+  apt:
+    name: nodejs
+    state: present
+
+- name: Install selected package managers- {{ PACKAGE_MANAGERS }}
+  npm:
+    name: "{{ item }}"
+    global: yes
+  loop: "{{ PACKAGE_MANAGERS }}"
+  when: PACKAGE_MANAGERS is defined
