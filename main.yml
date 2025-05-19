@@ -53,7 +53,9 @@
 
     - include_tasks: ./install-dependencies/docker.yml
 
-    - include_tasks: ./install-dependencies/mysql.yaml
+    - include_tasks: ./install-dependencies/mysql.yml
+
+    - include_tasks: ./install-dependencies/supervisor.yml
 
 
 

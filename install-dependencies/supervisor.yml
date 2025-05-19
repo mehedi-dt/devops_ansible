@@ -1,0 +1,11 @@
+- name: Install supervisor
+  package:
+    name: supervisor
+    state: "{{ STATE | default('present') }}"
+
+- name: Start and enable the service
+  service:
+    name: supervisor
+    state: started
+    enabled: yes
+  when: STATE is defined and STATE != 'absent'
