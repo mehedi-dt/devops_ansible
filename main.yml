@@ -51,6 +51,8 @@
         NODE_VERSION: 20.12.2 # 22.x.x
         PACKAGE_MANAGERS: [pnpm]
 
+    - include_tasks: ./install-dependencies/docker.yml
+
 
 
   handlers:
